@@ -201,7 +201,7 @@ Restart=always
 RestartSec=10
 
 [Install]
-WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/umbrel-startup.service"
+WantedBy=multi-user.target" | tee "/etc/systemd/system/umbrel-startup.service"
   chmod 644 "/etc/systemd/system/umbrel-startup.service"
   systemctl enable "umbrel-startup.service"
 }
