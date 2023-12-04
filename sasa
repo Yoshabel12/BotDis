@@ -4,12 +4,12 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 needrestart_conf_dir="/etc/needrestart/conf.d" 
 needrestart_conf_file="${needrestart_conf_dir}/temp-disable-for-umbrel-install.conf"
-sudo mkdir -p "${needrestart_conf_dir}"
+mkdir -p "${needrestart_conf_dir}"
 echo "# Restart services (l)ist only, (i)nteractive or (a)utomatically.
 \$nrconf{restart} = 'l';
 # Disable hints on pending kernel upgrades.
-\$nrconf{kernelhints} = 0; " | sudo tee "${needrestart_conf_file}" > /dev/null
-trap "sudo rm -f ${needrestart_conf_file}" EXIT
+\$nrconf{kernelhints} = 0; " | tee "${needrestart_conf_file}" > /dev/null
+trap "rm -f ${needrestart_conf_file}" EXIT
 
 # Default options
 PRINT_DOCKER_WARNING="true"
@@ -95,15 +95,15 @@ get_umbrel_version() {
 }
 
 update_apt() {
-  sudo apt-get update --yes
+  apt-get update --yes
 }
 
 install_apt_deps() {
-  sudo apt-get install --yes fswatch jq rsync curl git gettext-base python3 gnupg
+  apt-get install --yes fswatch jq rsync curl git gettext-base python3 gnupg
 }
 
 install_avahi() {
-  sudo apt-get install --yes avahi-daemon avahi-discover libnss-mdns
+  apt-get install --yes avahi-daemon avahi-discover libnss-mdns
 }
 
 install_yq() {
@@ -122,8 +122,8 @@ install_yq() {
 
   # Check file matches checksum
   if [[ "$(sha256sum "${yq_temp_file}" | awk '{ print $1 }')" == "${yq_sha256[$system_arch]}" ]]; then
-    sudo mv "${yq_temp_file}" /usr/bin/yq
-    sudo chmod +x /usr/bin/yq
+    mv "${yq_temp_file}" /usr/bin/yq
+    chmod +x /usr/bin/yq
 
     echo "yq installed successfully..."
   else
@@ -134,11 +134,11 @@ install_yq() {
 
 install_docker() {
   # Install Docker
-  sudo apt-get install --yes docker.io
+  apt-get install --yes docker.io
 }
 
 install_docker_compose() {
-  sudo apt-get install --yes docker-compose
+  apt-get install --yes docker-compose
 }
 
 get_arch() {
@@ -202,8 +202,8 @@ RestartSec=10
 
 [Install]
 WantedBy=multi-user.target" | sudo tee "/etc/systemd/system/umbrel-startup.service"
-  sudo chmod 644 "/etc/systemd/system/umbrel-startup.service"
-  sudo systemctl enable "umbrel-startup.service"
+  chmod 644 "/etc/systemd/system/umbrel-startup.service"
+  systemctl enable "umbrel-startup.service"
 }
 
 main() {
@@ -294,12 +294,12 @@ EOF
     fi
 
     # Do the initial start outside of systemd so we get logs
-    sudo ${UMBREL_INSTALL_PATH}/scripts/start
+    ${UMBREL_INSTALL_PATH}/scripts/start
 
     if [[ "${INSTALL_START_SCRIPT}" = "true" ]]
     then
       # Kick off the systemd service again so it's in sync
-      sudo systemctl start "umbrel-startup.service"
+      systemctl start "umbrel-startup.service"
     fi
 
   echo
